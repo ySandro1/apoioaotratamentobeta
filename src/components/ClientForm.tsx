@@ -1,0 +1,317 @@
+
+import React, { useState, useEffect } from "react";
+import { useTreatment } from "@/context/TreatmentContext";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { formatCPF, formatPhone, isValidCPF } from "@/utils/formatters";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { CalendarIcon, User, Phone, FileText } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Product } from "@/types/client";
+
+// Mock products for demonstration
+const mockProducts: Product[] = [
+  { code: "P001", name: "Amoxicilina 500mg" },
+  { code: "P002", name: "Dipirona 1g" },
+  { code: "P003", name: "Cefalexina 500mg" },
+  { code: "P004", name: "Doxiciclina 100mg" },
+  { code: "P005", name: "Metronidazol 400mg" },
+];
+
+const ClientForm: React.FC = () => {
+  const {
+    treatmentData,
+    updateClientName,
+    updateClientCPF,
+    updateClientPhone,
+    updateIsStartTreatment,
+    updateIsContinuousTreatment,
+    updateIsAntibioticTreatment,
+    updateBirthDate,
+    updateIsCRMV,
+    updateProduct,
+  } = useTreatment();
+
+  const [formattedCPF, setFormattedCPF] = useState("");
+  const [formattedPhone, setFormattedPhone] = useState("");
+  const [productSearch, setProductSearch] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Handle CPF changes with formatting
+  const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCPF(e.target.value);
+    setFormattedCPF(formatted);
+    updateClientCPF(formatted);
+  };
+
+  // Handle phone changes with formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setFormattedPhone(formatted);
+    updateClientPhone(formatted);
+  };
+
+  // Filter products based on search term
+  useEffect(() => {
+    if (productSearch.trim()) {
+      const searchTerm = productSearch.toLowerCase();
+      const filtered = mockProducts.filter(
+        (product) =>
+          product.code.toLowerCase().includes(searchTerm) ||
+          product.name.toLowerCase().includes(searchTerm)
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts([]);
+    }
+  }, [productSearch]);
+
+  // Select a product
+  const selectProduct = (product: Product) => {
+    updateProduct(product);
+    setProductSearch(product.name);
+    setIsSearching(false);
+  };
+
+  return (
+    <Card className="w-full max-w-3xl mx-auto card-shadow animate-fade-in">
+      <CardHeader className="bg-primary/5 border-b">
+        <CardTitle className="text-xl text-center font-medium flex items-center justify-center gap-2">
+          <FileText className="h-5 w-5" />
+          Formulário de Tratamento
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 space-y-6">
+        {/* Client Information Section */}
+        <div className="space-y-4">
+          <h3 className="font-medium text-lg">Informações do Cliente</h3>
+          
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="cpf" className="flex items-center gap-1">
+                  <span>CPF</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="cpf"
+                    value={formattedCPF}
+                    onChange={handleCPFChange}
+                    maxLength={14}
+                    placeholder="000.000.000-00"
+                    className="pl-8"
+                  />
+                  <User className="h-4 w-4 text-muted-foreground absolute left-2.5 top-[10px]" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-1">
+                  <span>Telefone</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="phone"
+                    value={formattedPhone}
+                    onChange={handlePhoneChange}
+                    maxLength={15}
+                    placeholder="(00) 00000-0000"
+                    className="pl-8"
+                  />
+                  <Phone className="h-4 w-4 text-muted-foreground absolute left-2.5 top-[10px]" />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name" className="flex items-center gap-1">
+                <span>Nome Completo</span>
+              </Label>
+              <Input
+                id="name"
+                value={treatmentData.clientName}
+                onChange={(e) => updateClientName(e.target.value)}
+                placeholder="Nome do cliente"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Treatment Type Section */}
+        <div className="space-y-4">
+          <h3 className="font-medium text-lg">Tipo de Tratamento</h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="start-treatment"
+                checked={treatmentData.isStartTreatment}
+                onCheckedChange={(checked) => 
+                  updateIsStartTreatment(checked as boolean)
+                }
+              />
+              <Label
+                htmlFor="start-treatment"
+                className="cursor-pointer"
+              >
+                Início de Tratamento
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="continuous-treatment"
+                checked={treatmentData.isContinuousTreatment}
+                onCheckedChange={(checked) => 
+                  updateIsContinuousTreatment(checked as boolean)
+                }
+              />
+              <Label
+                htmlFor="continuous-treatment"
+                className="cursor-pointer"
+              >
+                Tratamento Contínuo
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="antibiotic-treatment"
+                checked={treatmentData.isAntibioticTreatment}
+                onCheckedChange={(checked) => {
+                  const newValue = checked as boolean;
+                  updateIsAntibioticTreatment(newValue);
+                  
+                  // If unchecking antibiotic treatment, reset related fields
+                  if (!newValue) {
+                    updateBirthDate(undefined);
+                    updateIsCRMV(false);
+                  }
+                }}
+              />
+              <Label
+                htmlFor="antibiotic-treatment"
+                className="cursor-pointer"
+              >
+                Tratamento com Antibiótico
+              </Label>
+            </div>
+          </div>
+
+          {/* Conditional Antibiotic Treatment Section */}
+          {treatmentData.isAntibioticTreatment && (
+            <div className="ml-6 pt-2 pl-4 border-l-2 border-primary/20 space-y-4 animate-slide-in">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Checkbox
+                    id="crmv"
+                    checked={treatmentData.isCRMV}
+                    onCheckedChange={(checked) => {
+                      updateIsCRMV(checked as boolean);
+                    }}
+                  />
+                  <Label htmlFor="crmv" className="cursor-pointer">
+                    CRMV (Uso veterinário)
+                  </Label>
+                </div>
+
+                {!treatmentData.isCRMV && (
+                  <div className="space-y-2">
+                    <Label htmlFor="birthdate" className="flex items-center gap-1">
+                      <span>Data de Nascimento</span>
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          id="birthdate"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !treatmentData.birthDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {treatmentData.birthDate ? (
+                            format(treatmentData.birthDate, "PP", { locale: ptBR })
+                          ) : (
+                            <span>Selecione uma data</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={treatmentData.birthDate}
+                          onSelect={updateBirthDate}
+                          initialFocus
+                          disabled={(date) => date > new Date()}
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Product Selection Section */}
+        <div className="space-y-4">
+          <h3 className="font-medium text-lg">Produto</h3>
+          
+          <div className="space-y-2">
+            <Label htmlFor="product" className="flex items-center gap-1">
+              <span>Código ou Nome do Produto</span>
+            </Label>
+            <div className="relative">
+              <Input
+                id="product"
+                value={productSearch}
+                onChange={(e) => {
+                  setProductSearch(e.target.value);
+                  setIsSearching(true);
+                }}
+                placeholder="Buscar por código ou nome"
+                onFocus={() => setIsSearching(true)}
+                onBlur={() => {
+                  // Delay hiding the dropdown to allow for clicks
+                  setTimeout(() => setIsSearching(false), 150);
+                }}
+              />
+              {isSearching && filteredProducts.length > 0 && (
+                <div className="absolute left-0 right-0 mt-1 border rounded-md bg-background shadow-md z-10 max-h-60 overflow-y-auto">
+                  {filteredProducts.map((product) => (
+                    <div
+                      key={product.code}
+                      className="p-2 hover:bg-muted cursor-pointer flex justify-between"
+                      onMouseDown={() => selectProduct(product)}
+                    >
+                      <span>{product.name}</span>
+                      <span className="text-muted-foreground text-sm">{product.code}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {treatmentData.product && (
+              <p className="text-sm text-muted-foreground mt-1">
+                Produto selecionado: {treatmentData.product.name} ({treatmentData.product.code})
+              </p>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ClientForm;
