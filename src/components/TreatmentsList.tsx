@@ -68,53 +68,81 @@ const TreatmentsList: React.FC = () => {
     
     // Generate report HTML content
     const reportHTML = `
-      <div style="padding: 20px; font-family: Arial, sans-serif;">
+      <div style="padding: 10px; font-family: Arial, sans-serif;">
         <style>
           @media print {
-            body { font-family: Arial, sans-serif; }
-            .print-header { text-align: center; margin-bottom: 20px; }
-            .print-section { margin-bottom: 15px; }
+            body { font-family: Arial, sans-serif; font-size: 10px; }
+            .print-header { text-align: center; margin-bottom: 10px; }
+            .print-section { margin-bottom: 10px; }
             .print-label { font-weight: bold; }
-            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            th, td { border: 1px solid #ddd; padding: 5px; text-align: left; font-size: 10px; }
             th { background-color: #f2f2f2; }
-            .treatment-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+            .treatment-item { border-bottom: 1px solid #eee; padding: 5px 0; }
             .treatment-item:last-child { border-bottom: none; }
+            
+            /* Compact table style */
+            .compact-table { width: 100%; border-collapse: collapse; }
+            .compact-table th, .compact-table td { 
+              border: 1px solid #ddd; 
+              padding: 3px; 
+              text-align: left; 
+              font-size: 9px;
+              vertical-align: top;
+            }
+            .compact-table th { background-color: #f2f2f2; font-weight: bold; }
+            .treatment-label { font-weight: bold; margin-bottom: 1px; }
+            .treatment-value { margin-bottom: 1px; }
           }
         </style>
         <div class="print-header">
-          <h1>Relatório de Tratamentos</h1>
-          <p>Data: ${format(new Date(), "PPP", { locale: ptBR })}</p>
+          <h1 style="font-size: 12px; margin-bottom: 5px;">Relatório de Tratamentos</h1>
+          <p style="font-size: 10px;">Data: ${format(new Date(), "PPP", { locale: ptBR })}</p>
         </div>
         
         <div class="print-section">
-          <h2>Tratamentos Registrados</h2>
-          <p>Total: ${allTreatments.length}</p>
+          <p style="font-size: 10px; margin-bottom: 5px;">Total de Tratamentos: ${allTreatments.length}</p>
           
-          ${allTreatments.map((treatment, index) => `
-            <div class="treatment-item">
-              <h3>${index + 1}. ${treatment.clientName}</h3>
-              <p><span class="print-label">CPF:</span> ${treatment.clientCPF}</p>
-              <p><span class="print-label">Telefone:</span> ${treatment.clientPhone}</p>
-              <p><span class="print-label">Data do Registro:</span> ${format(new Date(treatment.createdAt), "PPP", { locale: ptBR })}</p>
-              
-              <p><span class="print-label">Tipo de Tratamento:</span>
-                ${treatment.isStartTreatment ? ' Início de Tratamento;' : ''}
-                ${treatment.isContinuousTreatment ? ' Tratamento Contínuo;' : ''}
-                ${treatment.isAntibioticTreatment ? ' Tratamento com Antibiótico;' : ''}
-              </p>
-              
-              ${treatment.isAntibioticTreatment && !treatment.isCRMV && treatment.birthDate ? 
-                `<p><span class="print-label">Data de Nascimento:</span> ${format(new Date(treatment.birthDate), "PPP", { locale: ptBR })}</p>` : ''}
-              
-              ${treatment.isAntibioticTreatment && treatment.isCRMV ? 
-                `<p><span class="print-label">CRMV:</span> Sim</p>` : ''}
-              
-              ${treatment.product ? 
-                `<p><span class="print-label">Produto:</span> ${treatment.product.name} (${treatment.product.code})</p>` : 
-                `<p><span class="print-label">Produto:</span> Não informado</p>`}
-            </div>
-          `).join('')}
+          <table class="compact-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Contato</th>
+                <th>Tipo de Tratamento</th>
+                <th>Produto</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${allTreatments.map((treatment) => `
+                <tr>
+                  <td>
+                    <div class="treatment-value">${treatment.clientName}</div>
+                    <div class="treatment-value">${treatment.clientCPF}</div>
+                    ${treatment.isAntibioticTreatment && !treatment.isCRMV && treatment.birthDate ? 
+                      `<div class="treatment-value"><small>Nasc: ${format(new Date(treatment.birthDate), "dd/MM/yyyy", { locale: ptBR })}</small></div>` : ''}
+                  </td>
+                  <td>
+                    <div class="treatment-value">${treatment.clientPhone}</div>
+                  </td>
+                  <td>
+                    <div class="treatment-value" style="white-space: nowrap;">
+                      ${treatment.isStartTreatment ? '• Início; ' : ''}
+                      ${treatment.isContinuousTreatment ? '• Contínuo; ' : ''}
+                      ${treatment.isAntibioticTreatment ? '• Antibiótico' : ''}
+                      ${treatment.isAntibioticTreatment && treatment.isCRMV ? ' (CRMV)' : ''}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="treatment-value">${treatment.product?.name || "Não informado"}</div>
+                  </td>
+                  <td>
+                    <div class="treatment-value">${format(new Date(treatment.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}</div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
         </div>
       </div>
     `;

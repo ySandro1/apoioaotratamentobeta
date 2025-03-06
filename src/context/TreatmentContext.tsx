@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { TreatmentData, initialTreatmentData, Product } from "../types/client";
 import { v4 as uuidv4 } from "uuid";
@@ -35,13 +34,11 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [allTreatments, setAllTreatments] = useState<TreatmentData[]>([]);
   const [selectedTreatment, setSelectedTreatment] = useState<TreatmentData | null>(null);
 
-  // Carregar tratamentos salvos ao iniciar
   useEffect(() => {
     const savedTreatments = localStorage.getItem(STORAGE_KEY);
     if (savedTreatments) {
       try {
         const parsedTreatments = JSON.parse(savedTreatments);
-        // Converter string de data para objeto Date
         const treatmentsWithDates = parsedTreatments.map((treatment: any) => ({
           ...treatment,
           createdAt: new Date(treatment.createdAt),
@@ -54,7 +51,6 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   }, []);
 
-  // Salvar tratamentos no localStorage quando houver mudanças
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allTreatments));
   }, [allTreatments]);
@@ -110,7 +106,6 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
       createdAt: new Date()
     };
     
-    // Verifica se está editando um tratamento existente
     if (selectedTreatment) {
       setAllTreatments(prev => 
         prev.map(item => item.id === selectedTreatment.id ? treatmentToSave : item)

@@ -31,6 +31,21 @@ export const formatPhone = (value: string): string => {
   }
 };
 
+// Date formatter (DD/MM/YYYY)
+export const formatDate = (value: string): string => {
+  // Remove non-digit characters
+  const digits = value.replace(/\D/g, '');
+  
+  // Apply mask: DD/MM/YYYY
+  if (digits.length <= 2) {
+    return digits;
+  } else if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  } else {
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+  }
+};
+
 // CPF validation
 export const isValidCPF = (cpf: string): boolean => {
   const cleanCPF = cpf.replace(/\D/g, '');

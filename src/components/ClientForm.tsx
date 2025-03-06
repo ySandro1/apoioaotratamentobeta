@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { Input } from "@/components/ui/input";
@@ -8,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { formatCPF, formatPhone, isValidCPF } from "@/utils/formatters";
+import { formatCPF, formatPhone, isValidCPF, formatDate } from "@/utils/formatters";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, User, Phone, FileText, Save } from "lucide-react";
@@ -38,7 +37,6 @@ const ClientForm: React.FC = () => {
   const [productName, setProductName] = useState("");
   const [birthDateInput, setBirthDateInput] = useState("");
 
-  // Carregar dados do tratamento selecionado para edição
   useEffect(() => {
     if (selectedTreatment) {
       setFormattedCPF(selectedTreatment.clientCPF);
@@ -59,36 +57,33 @@ const ClientForm: React.FC = () => {
     }
   }, [selectedTreatment]);
 
-  // Handle CPF changes with formatting
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCPF(e.target.value);
     setFormattedCPF(formatted);
     updateClientCPF(formatted);
   };
 
-  // Handle phone changes with formatting
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setFormattedPhone(formatted);
     updateClientPhone(formatted);
   };
 
-  // Handle product name changes
   const handleProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setProductName(value);
     updateProduct(value ? { name: value, code: "" } : null);
   };
 
-  // Handle date input change
   const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setBirthDateInput(value);
+    const rawValue = value.replace(/\D/g, '');
+    const formatted = formatDate(rawValue);
+    setBirthDateInput(formatted);
     
-    // Tentar converter a string de data para objeto Date
-    if (value.length === 10) { // Espera-se formato DD/MM/YYYY
+    if (formatted.length === 10) {
       try {
-        const parsedDate = parse(value, "dd/MM/yyyy", new Date());
+        const parsedDate = parse(formatted, "dd/MM/yyyy", new Date());
         if (!isNaN(parsedDate.getTime())) {
           updateBirthDate(parsedDate);
         }
@@ -99,7 +94,6 @@ const ClientForm: React.FC = () => {
   };
 
   const handleSaveTreatment = () => {
-    // Validações básicas
     if (!treatmentData.clientName || !treatmentData.clientCPF || !treatmentData.clientPhone) {
       toast.error("Preencha os dados do cliente");
       return;
@@ -115,9 +109,12 @@ const ClientForm: React.FC = () => {
       return;
     }
 
-    // Produto não é mais obrigatório
     saveCurrentTreatment();
     toast.success(selectedTreatment ? "Tratamento atualizado com sucesso" : "Tratamento salvo com sucesso");
+    setFormattedCPF("");
+    setFormattedPhone("");
+    setProductName("");
+    setBirthDateInput("");
   };
 
   return (
@@ -129,7 +126,6 @@ const ClientForm: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
-        {/* Client Information Section */}
         <div className="space-y-4">
           <h3 className="font-medium text-lg">Informações do Cliente</h3>
           
@@ -184,7 +180,6 @@ const ClientForm: React.FC = () => {
           </div>
         </div>
 
-        {/* Treatment Type Section */}
         <div className="space-y-4">
           <h3 className="font-medium text-lg">Tipo de Tratamento</h3>
           
@@ -229,7 +224,6 @@ const ClientForm: React.FC = () => {
                   const newValue = checked as boolean;
                   updateIsAntibioticTreatment(newValue);
                   
-                  // If unchecking antibiotic treatment, reset related fields
                   if (!newValue) {
                     updateBirthDate(undefined);
                     updateIsCRMV(false);
@@ -246,7 +240,6 @@ const ClientForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Conditional Antibiotic Treatment Section */}
           {treatmentData.isAntibioticTreatment && (
             <div className="ml-6 pt-2 pl-4 border-l-2 border-primary/20 space-y-4 animate-slide-in">
               <div className="space-y-2">
@@ -313,7 +306,6 @@ const ClientForm: React.FC = () => {
           )}
         </div>
 
-        {/* Product Input Section (manual) */}
         <div className="space-y-4">
           <h3 className="font-medium text-lg">Produto (Opcional)</h3>
           

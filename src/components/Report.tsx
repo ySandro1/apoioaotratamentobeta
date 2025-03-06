@@ -43,20 +43,20 @@ const Report: React.FC = () => {
       <div style="padding: 10px; font-size: 12px; max-width: 800px; margin: 0 auto;">
         <style>
           @media print {
-            body { font-family: Arial, sans-serif; font-size: 12px; }
-            .print-header { text-align: center; margin-bottom: 10px; }
-            .print-header h1 { font-size: 16px; margin: 0; }
-            .print-header p { font-size: 12px; margin: 5px 0; }
-            .print-section { margin-bottom: 10px; }
+            body { font-family: Arial, sans-serif; font-size: 10px; }
+            .print-header { text-align: center; margin-bottom: 5px; }
+            .print-header h1 { font-size: 14px; margin: 0; }
+            .print-header p { font-size: 10px; margin: 3px 0; }
+            .print-section { margin-bottom: 5px; }
             .print-label { font-weight: bold; }
             .compact-layout { display: flex; flex-wrap: wrap; }
             .compact-layout > div { margin-right: 20px; margin-bottom: 5px; }
-            .customer-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
-            .treatment-types { display: flex; flex-wrap: wrap; gap: 15px; }
-            .treatment-types div { margin-right: 10px; }
-            .product-info { margin-top: 5px; }
-            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-            th, td { border: 1px solid #ddd; padding: 5px; text-align: left; font-size: 12px; }
+            .customer-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+            .treatment-types { display: flex; flex-wrap: wrap; gap: 10px; }
+            .treatment-types div { margin-right: 5px; }
+            .product-info { margin-top: 3px; }
+            table { width: 100%; border-collapse: collapse; margin: 5px 0; }
+            th, td { border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 10px; }
             th { background-color: #f2f2f2; }
           }
         </style>
