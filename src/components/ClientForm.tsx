@@ -136,11 +136,7 @@ const ClientForm: React.FC = () => {
       return;
     }
 
-    if (!treatmentData.product) {
-      toast.error("Selecione um produto");
-      return;
-    }
-
+    // Produto não é mais obrigatório
     saveCurrentTreatment();
     toast.success(selectedTreatment ? "Tratamento atualizado com sucesso" : "Tratamento salvo com sucesso");
   };
@@ -338,9 +334,9 @@ const ClientForm: React.FC = () => {
           )}
         </div>
 
-        {/* Product Selection Section */}
+        {/* Product Selection Section (now optional) */}
         <div className="space-y-4">
-          <h3 className="font-medium text-lg">Produto</h3>
+          <h3 className="font-medium text-lg">Produto (Opcional)</h3>
           
           <div className="space-y-2">
             <Label htmlFor="product" className="flex items-center gap-1">

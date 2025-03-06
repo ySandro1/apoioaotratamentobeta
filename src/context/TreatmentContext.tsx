@@ -18,6 +18,7 @@ interface TreatmentContextType {
   saveCurrentTreatment: () => void;
   allTreatments: TreatmentData[];
   deleteTreatment: (id: string) => void;
+  deleteAllTreatments: () => void;
   selectedTreatment: TreatmentData | null;
   setSelectedTreatment: (treatment: TreatmentData | null) => void;
 }
@@ -55,9 +56,7 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   // Salvar tratamentos no localStorage quando houver mudanças
   useEffect(() => {
-    if (allTreatments.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allTreatments));
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allTreatments));
   }, [allTreatments]);
 
   const updateClientName = (name: string) => {
@@ -132,6 +131,12 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   };
 
+  const deleteAllTreatments = () => {
+    setAllTreatments([]);
+    setSelectedTreatment(null);
+    resetForm();
+  };
+
   return (
     <TreatmentContext.Provider value={{
       treatmentData,
@@ -148,6 +153,7 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
       saveCurrentTreatment,
       allTreatments,
       deleteTreatment,
+      deleteAllTreatments,
       selectedTreatment,
       setSelectedTreatment
     }}>
