@@ -9,33 +9,36 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 
 const Report: React.FC = () => {
-  const { treatmentData } = useTreatment();
+  const { treatmentData, selectedTreatment } = useTreatment();
   const reportRef = useRef<HTMLDivElement>(null);
+  
+  // Use selected treatment if available, otherwise use current form data
+  const dataToDisplay = selectedTreatment || treatmentData;
 
   const printReport = () => {
     // Validation before printing
-    if (!treatmentData.clientName || !treatmentData.clientCPF || !treatmentData.clientPhone) {
+    if (!dataToDisplay.clientName || !dataToDisplay.clientCPF || !dataToDisplay.clientPhone) {
       toast.error("Preencha os dados do cliente antes de gerar o relatório");
       return;
     }
 
-    if (!treatmentData.isStartTreatment && !treatmentData.isContinuousTreatment && !treatmentData.isAntibioticTreatment) {
+    if (!dataToDisplay.isStartTreatment && !dataToDisplay.isContinuousTreatment && !dataToDisplay.isAntibioticTreatment) {
       toast.error("Selecione pelo menos um tipo de tratamento");
       return;
     }
 
-    if (treatmentData.isAntibioticTreatment && !treatmentData.isCRMV && !treatmentData.birthDate) {
+    if (dataToDisplay.isAntibioticTreatment && !dataToDisplay.isCRMV && !dataToDisplay.birthDate) {
       toast.error("Informe a data de nascimento para tratamento com antibiótico");
       return;
     }
 
-    if (!treatmentData.product) {
+    if (!dataToDisplay.product) {
       toast.error("Selecione um produto");
       return;
     }
 
     const originalTitle = document.title;
-    document.title = `Relatório - ${treatmentData.clientName}`;
+    document.title = `Relatório - ${dataToDisplay.clientName}`;
 
     // Create a print-friendly environment
     const originalContents = document.body.innerHTML;
@@ -89,21 +92,21 @@ const Report: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Nome:</p>
-                    <p className="font-medium">{treatmentData.clientName || "-"}</p>
+                    <p className="font-medium">{dataToDisplay.clientName || "-"}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">CPF:</p>
-                    <p className="font-medium">{treatmentData.clientCPF || "-"}</p>
+                    <p className="font-medium">{dataToDisplay.clientCPF || "-"}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Telefone:</p>
-                    <p className="font-medium">{treatmentData.clientPhone || "-"}</p>
+                    <p className="font-medium">{dataToDisplay.clientPhone || "-"}</p>
                   </div>
-                  {treatmentData.isAntibioticTreatment && !treatmentData.isCRMV && treatmentData.birthDate && (
+                  {dataToDisplay.isAntibioticTreatment && !dataToDisplay.isCRMV && dataToDisplay.birthDate && (
                     <div>
                       <p className="text-sm text-muted-foreground">Data de Nascimento:</p>
                       <p className="font-medium">
-                        {format(treatmentData.birthDate, "PPP", { locale: ptBR })}
+                        {format(dataToDisplay.birthDate, "PPP", { locale: ptBR })}
                       </p>
                     </div>
                   )}
@@ -113,16 +116,16 @@ const Report: React.FC = () => {
               <div>
                 <h3 className="font-medium text-lg mb-3">Tipo de Tratamento</h3>
                 <ul className="list-disc pl-5 space-y-1">
-                  {treatmentData.isStartTreatment && (
+                  {dataToDisplay.isStartTreatment && (
                     <li>Início de Tratamento</li>
                   )}
-                  {treatmentData.isContinuousTreatment && (
+                  {dataToDisplay.isContinuousTreatment && (
                     <li>Tratamento Contínuo</li>
                   )}
-                  {treatmentData.isAntibioticTreatment && (
+                  {dataToDisplay.isAntibioticTreatment && (
                     <li>
                       Tratamento com Antibiótico
-                      {treatmentData.isCRMV && " (Uso Veterinário - CRMV)"}
+                      {dataToDisplay.isCRMV && " (CRMV)"}
                     </li>
                   )}
                 </ul>
@@ -130,16 +133,16 @@ const Report: React.FC = () => {
 
               <div>
                 <h3 className="font-medium text-lg mb-3">Produto Utilizado</h3>
-                {treatmentData.product ? (
+                {dataToDisplay.product ? (
                   <div className="border rounded-md p-3 bg-secondary/50">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <p className="text-sm text-muted-foreground">Código:</p>
-                        <p className="font-medium">{treatmentData.product.code}</p>
+                        <p className="font-medium">{dataToDisplay.product.code}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Nome:</p>
-                        <p className="font-medium">{treatmentData.product.name}</p>
+                        <p className="font-medium">{dataToDisplay.product.name}</p>
                       </div>
                     </div>
                   </div>

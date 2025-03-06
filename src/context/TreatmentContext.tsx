@@ -1,6 +1,7 @@
 
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { TreatmentData, initialTreatmentData, Product } from "../types/client";
+import { v4 as uuidv4 } from "uuid";
 
 interface TreatmentContextType {
   treatmentData: TreatmentData;
@@ -14,12 +15,50 @@ interface TreatmentContextType {
   updateIsCRMV: (value: boolean) => void;
   updateProduct: (product: Product | null) => void;
   resetForm: () => void;
+  saveCurrentTreatment: () => void;
+  allTreatments: TreatmentData[];
+  deleteTreatment: (id: string) => void;
+  selectedTreatment: TreatmentData | null;
+  setSelectedTreatment: (treatment: TreatmentData | null) => void;
 }
+
+const STORAGE_KEY = "treatmentsList";
 
 const TreatmentContext = createContext<TreatmentContextType | undefined>(undefined);
 
 export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [treatmentData, setTreatmentData] = useState<TreatmentData>(initialTreatmentData);
+  const [treatmentData, setTreatmentData] = useState<TreatmentData>({
+    ...initialTreatmentData,
+    id: uuidv4()
+  });
+  const [allTreatments, setAllTreatments] = useState<TreatmentData[]>([]);
+  const [selectedTreatment, setSelectedTreatment] = useState<TreatmentData | null>(null);
+
+  // Carregar tratamentos salvos ao iniciar
+  useEffect(() => {
+    const savedTreatments = localStorage.getItem(STORAGE_KEY);
+    if (savedTreatments) {
+      try {
+        const parsedTreatments = JSON.parse(savedTreatments);
+        // Converter string de data para objeto Date
+        const treatmentsWithDates = parsedTreatments.map((treatment: any) => ({
+          ...treatment,
+          createdAt: new Date(treatment.createdAt),
+          birthDate: treatment.birthDate ? new Date(treatment.birthDate) : undefined,
+        }));
+        setAllTreatments(treatmentsWithDates);
+      } catch (error) {
+        console.error("Erro ao carregar tratamentos:", error);
+      }
+    }
+  }, []);
+
+  // Salvar tratamentos no localStorage quando houver mudanças
+  useEffect(() => {
+    if (allTreatments.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(allTreatments));
+    }
+  }, [allTreatments]);
 
   const updateClientName = (name: string) => {
     setTreatmentData(prev => ({ ...prev, clientName: name }));
@@ -58,7 +97,39 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
 
   const resetForm = () => {
-    setTreatmentData(initialTreatmentData);
+    setTreatmentData({
+      ...initialTreatmentData,
+      id: uuidv4(),
+      createdAt: new Date()
+    });
+    setSelectedTreatment(null);
+  };
+
+  const saveCurrentTreatment = () => {
+    const treatmentToSave = {
+      ...treatmentData,
+      createdAt: new Date()
+    };
+    
+    // Verifica se está editando um tratamento existente
+    if (selectedTreatment) {
+      setAllTreatments(prev => 
+        prev.map(item => item.id === selectedTreatment.id ? treatmentToSave : item)
+      );
+    } else {
+      setAllTreatments(prev => [...prev, treatmentToSave]);
+    }
+    
+    resetForm();
+  };
+
+  const deleteTreatment = (id: string) => {
+    setAllTreatments(prev => prev.filter(treatment => treatment.id !== id));
+    
+    if (selectedTreatment && selectedTreatment.id === id) {
+      setSelectedTreatment(null);
+      resetForm();
+    }
   };
 
   return (
@@ -73,7 +144,12 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
       updateBirthDate,
       updateIsCRMV,
       updateProduct,
-      resetForm
+      resetForm,
+      saveCurrentTreatment,
+      allTreatments,
+      deleteTreatment,
+      selectedTreatment,
+      setSelectedTreatment
     }}>
       {children}
     </TreatmentContext.Provider>

@@ -5,6 +5,8 @@ export interface Product {
 }
 
 export interface TreatmentData {
+  id: string;
+  createdAt: Date;
   clientName: string;
   clientCPF: string;
   clientPhone: string;
@@ -17,6 +19,8 @@ export interface TreatmentData {
 }
 
 export const initialTreatmentData: TreatmentData = {
+  id: "",
+  createdAt: new Date(),
   clientName: "",
   clientCPF: "",
   clientPhone: "",

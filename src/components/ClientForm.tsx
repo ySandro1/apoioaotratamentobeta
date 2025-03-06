@@ -4,15 +4,15 @@ import { useTreatment } from "@/context/TreatmentContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { formatCPF, formatPhone, isValidCPF } from "@/utils/formatters";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, User, Phone, FileText } from "lucide-react";
-import { format } from "date-fns";
+import { CalendarIcon, User, Phone, FileText, Save } from "lucide-react";
+import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Product } from "@/types/client";
 
@@ -37,6 +37,9 @@ const ClientForm: React.FC = () => {
     updateBirthDate,
     updateIsCRMV,
     updateProduct,
+    saveCurrentTreatment,
+    resetForm,
+    selectedTreatment
   } = useTreatment();
 
   const [formattedCPF, setFormattedCPF] = useState("");
@@ -44,6 +47,23 @@ const ClientForm: React.FC = () => {
   const [productSearch, setProductSearch] = useState("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [birthDateInput, setBirthDateInput] = useState("");
+
+  // Carregar dados do tratamento selecionado para edição
+  useEffect(() => {
+    if (selectedTreatment) {
+      setFormattedCPF(selectedTreatment.clientCPF);
+      setFormattedPhone(selectedTreatment.clientPhone);
+      if (selectedTreatment.product) {
+        setProductSearch(selectedTreatment.product.name);
+      }
+      if (selectedTreatment.birthDate) {
+        setBirthDateInput(format(selectedTreatment.birthDate, "dd/MM/yyyy"));
+      }
+    } else {
+      setBirthDateInput("");
+    }
+  }, [selectedTreatment]);
 
   // Handle CPF changes with formatting
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,12 +101,56 @@ const ClientForm: React.FC = () => {
     setIsSearching(false);
   };
 
+  // Handle date input change
+  const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setBirthDateInput(value);
+    
+    // Tentar converter a string de data para objeto Date
+    if (value.length === 10) { // Espera-se formato DD/MM/YYYY
+      try {
+        const parsedDate = parse(value, "dd/MM/yyyy", new Date());
+        if (!isNaN(parsedDate.getTime())) {
+          updateBirthDate(parsedDate);
+        }
+      } catch (error) {
+        console.error("Erro ao converter data:", error);
+      }
+    }
+  };
+
+  const handleSaveTreatment = () => {
+    // Validações básicas
+    if (!treatmentData.clientName || !treatmentData.clientCPF || !treatmentData.clientPhone) {
+      toast.error("Preencha os dados do cliente");
+      return;
+    }
+
+    if (!treatmentData.isStartTreatment && !treatmentData.isContinuousTreatment && !treatmentData.isAntibioticTreatment) {
+      toast.error("Selecione pelo menos um tipo de tratamento");
+      return;
+    }
+
+    if (treatmentData.isAntibioticTreatment && !treatmentData.isCRMV && !treatmentData.birthDate) {
+      toast.error("Informe a data de nascimento para tratamento com antibiótico");
+      return;
+    }
+
+    if (!treatmentData.product) {
+      toast.error("Selecione um produto");
+      return;
+    }
+
+    saveCurrentTreatment();
+    toast.success(selectedTreatment ? "Tratamento atualizado com sucesso" : "Tratamento salvo com sucesso");
+  };
+
   return (
     <Card className="w-full max-w-3xl mx-auto card-shadow animate-fade-in">
       <CardHeader className="bg-primary/5 border-b">
         <CardTitle className="text-xl text-center font-medium flex items-center justify-center gap-2">
           <FileText className="h-5 w-5" />
-          Formulário de Tratamento
+          {selectedTreatment ? "Editar Tratamento" : "Novo Tratamento"}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
@@ -194,6 +258,7 @@ const ClientForm: React.FC = () => {
                   if (!newValue) {
                     updateBirthDate(undefined);
                     updateIsCRMV(false);
+                    setBirthDateInput("");
                   }
                 }}
               />
@@ -219,7 +284,7 @@ const ClientForm: React.FC = () => {
                     }}
                   />
                   <Label htmlFor="crmv" className="cursor-pointer">
-                    CRMV (Uso veterinário)
+                    CRMV
                   </Label>
                 </div>
 
@@ -228,35 +293,44 @@ const ClientForm: React.FC = () => {
                     <Label htmlFor="birthdate" className="flex items-center gap-1">
                       <span>Data de Nascimento</span>
                     </Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="birthdate"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !treatmentData.birthDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {treatmentData.birthDate ? (
-                            format(treatmentData.birthDate, "PP", { locale: ptBR })
-                          ) : (
-                            <span>Selecione uma data</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={treatmentData.birthDate}
-                          onSelect={updateBirthDate}
-                          initialFocus
-                          disabled={(date) => date > new Date()}
-                          className={cn("p-3 pointer-events-auto")}
+                    <div className="flex space-x-2">
+                      <div className="relative flex-1">
+                        <Input
+                          id="birthdate-input"
+                          value={birthDateInput}
+                          onChange={handleDateInputChange}
+                          placeholder="DD/MM/AAAA"
+                          className="pl-8"
                         />
-                      </PopoverContent>
-                    </Popover>
+                        <CalendarIcon className="h-4 w-4 text-muted-foreground absolute left-2.5 top-[10px]" />
+                      </div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="px-2"
+                            type="button"
+                          >
+                            <CalendarIcon className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={treatmentData.birthDate}
+                            onSelect={(date) => {
+                              updateBirthDate(date);
+                              if (date) {
+                                setBirthDateInput(format(date, "dd/MM/yyyy"));
+                              }
+                            }}
+                            initialFocus
+                            disabled={(date) => date > new Date()}
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                 )}
               </div>
@@ -310,6 +384,20 @@ const ClientForm: React.FC = () => {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="bg-muted/50 p-4 flex justify-between border-t">
+        <Button 
+          variant="outline"
+          onClick={resetForm}
+        >
+          {selectedTreatment ? "Cancelar" : "Limpar"}
+        </Button>
+        <Button 
+          onClick={handleSaveTreatment}
+        >
+          <Save className="mr-2 h-4 w-4" />
+          {selectedTreatment ? "Atualizar" : "Salvar"} Tratamento
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
