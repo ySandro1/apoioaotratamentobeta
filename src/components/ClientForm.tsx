@@ -16,15 +16,6 @@ import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Product } from "@/types/client";
 
-// Mock products for demonstration
-const mockProducts: Product[] = [
-  { code: "P001", name: "Amoxicilina 500mg" },
-  { code: "P002", name: "Dipirona 1g" },
-  { code: "P003", name: "Cefalexina 500mg" },
-  { code: "P004", name: "Doxiciclina 100mg" },
-  { code: "P005", name: "Metronidazol 400mg" },
-];
-
 const ClientForm: React.FC = () => {
   const {
     treatmentData,
@@ -44,9 +35,7 @@ const ClientForm: React.FC = () => {
 
   const [formattedCPF, setFormattedCPF] = useState("");
   const [formattedPhone, setFormattedPhone] = useState("");
-  const [productSearch, setProductSearch] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [productName, setProductName] = useState("");
   const [birthDateInput, setBirthDateInput] = useState("");
 
   // Carregar dados do tratamento selecionado para edição
@@ -55,13 +44,18 @@ const ClientForm: React.FC = () => {
       setFormattedCPF(selectedTreatment.clientCPF);
       setFormattedPhone(selectedTreatment.clientPhone);
       if (selectedTreatment.product) {
-        setProductSearch(selectedTreatment.product.name);
+        setProductName(selectedTreatment.product.name);
+      } else {
+        setProductName("");
       }
       if (selectedTreatment.birthDate) {
         setBirthDateInput(format(selectedTreatment.birthDate, "dd/MM/yyyy"));
+      } else {
+        setBirthDateInput("");
       }
     } else {
       setBirthDateInput("");
+      setProductName("");
     }
   }, [selectedTreatment]);
 
@@ -79,26 +73,11 @@ const ClientForm: React.FC = () => {
     updateClientPhone(formatted);
   };
 
-  // Filter products based on search term
-  useEffect(() => {
-    if (productSearch.trim()) {
-      const searchTerm = productSearch.toLowerCase();
-      const filtered = mockProducts.filter(
-        (product) =>
-          product.code.toLowerCase().includes(searchTerm) ||
-          product.name.toLowerCase().includes(searchTerm)
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts([]);
-    }
-  }, [productSearch]);
-
-  // Select a product
-  const selectProduct = (product: Product) => {
-    updateProduct(product);
-    setProductSearch(product.name);
-    setIsSearching(false);
+  // Handle product name changes
+  const handleProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setProductName(value);
+    updateProduct(value ? { name: value, code: "" } : null);
   };
 
   // Handle date input change
@@ -334,49 +313,20 @@ const ClientForm: React.FC = () => {
           )}
         </div>
 
-        {/* Product Selection Section (now optional) */}
+        {/* Product Input Section (manual) */}
         <div className="space-y-4">
           <h3 className="font-medium text-lg">Produto (Opcional)</h3>
           
           <div className="space-y-2">
             <Label htmlFor="product" className="flex items-center gap-1">
-              <span>Código ou Nome do Produto</span>
+              <span>Nome do Produto</span>
             </Label>
-            <div className="relative">
-              <Input
-                id="product"
-                value={productSearch}
-                onChange={(e) => {
-                  setProductSearch(e.target.value);
-                  setIsSearching(true);
-                }}
-                placeholder="Buscar por código ou nome"
-                onFocus={() => setIsSearching(true)}
-                onBlur={() => {
-                  // Delay hiding the dropdown to allow for clicks
-                  setTimeout(() => setIsSearching(false), 150);
-                }}
-              />
-              {isSearching && filteredProducts.length > 0 && (
-                <div className="absolute left-0 right-0 mt-1 border rounded-md bg-background shadow-md z-10 max-h-60 overflow-y-auto">
-                  {filteredProducts.map((product) => (
-                    <div
-                      key={product.code}
-                      className="p-2 hover:bg-muted cursor-pointer flex justify-between"
-                      onMouseDown={() => selectProduct(product)}
-                    >
-                      <span>{product.name}</span>
-                      <span className="text-muted-foreground text-sm">{product.code}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            {treatmentData.product && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Produto selecionado: {treatmentData.product.name} ({treatmentData.product.code})
-              </p>
-            )}
+            <Input
+              id="product"
+              value={productName}
+              onChange={handleProductNameChange}
+              placeholder="Digite o nome do produto"
+            />
           </div>
         </div>
       </CardContent>

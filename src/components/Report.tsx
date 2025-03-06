@@ -32,11 +32,6 @@ const Report: React.FC = () => {
       return;
     }
 
-    if (!dataToDisplay.product) {
-      toast.error("Selecione um produto");
-      return;
-    }
-
     const originalTitle = document.title;
     document.title = `Relatório - ${dataToDisplay.clientName}`;
 
@@ -45,15 +40,23 @@ const Report: React.FC = () => {
     const printContents = reportRef.current?.innerHTML;
     
     document.body.innerHTML = `
-      <div style="padding: 20px;">
+      <div style="padding: 10px; font-size: 12px; max-width: 800px; margin: 0 auto;">
         <style>
           @media print {
-            body { font-family: Arial, sans-serif; }
-            .print-header { text-align: center; margin-bottom: 20px; }
-            .print-section { margin-bottom: 15px; }
+            body { font-family: Arial, sans-serif; font-size: 12px; }
+            .print-header { text-align: center; margin-bottom: 10px; }
+            .print-header h1 { font-size: 16px; margin: 0; }
+            .print-header p { font-size: 12px; margin: 5px 0; }
+            .print-section { margin-bottom: 10px; }
             .print-label { font-weight: bold; }
-            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            .compact-layout { display: flex; flex-wrap: wrap; }
+            .compact-layout > div { margin-right: 20px; margin-bottom: 5px; }
+            .customer-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+            .treatment-types { display: flex; flex-wrap: wrap; gap: 15px; }
+            .treatment-types div { margin-right: 10px; }
+            .product-info { margin-top: 5px; }
+            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            th, td { border: 1px solid #ddd; padding: 5px; text-align: left; font-size: 12px; }
             th { background-color: #f2f2f2; }
           }
         </style>
@@ -86,27 +89,27 @@ const Report: React.FC = () => {
         
         <div ref={reportRef}>
           <CardContent className="p-6">
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
-                <h3 className="font-medium text-lg mb-3">Dados do Cliente</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="font-medium text-lg mb-2">Dados do Cliente</h3>
+                <div className="customer-info grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">Nome:</p>
+                    <p className="text-sm text-muted-foreground mb-1">Nome:</p>
                     <p className="font-medium">{dataToDisplay.clientName || "-"}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">CPF:</p>
+                    <p className="text-sm text-muted-foreground mb-1">CPF:</p>
                     <p className="font-medium">{dataToDisplay.clientCPF || "-"}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Telefone:</p>
+                    <p className="text-sm text-muted-foreground mb-1">Telefone:</p>
                     <p className="font-medium">{dataToDisplay.clientPhone || "-"}</p>
                   </div>
                   {dataToDisplay.isAntibioticTreatment && !dataToDisplay.isCRMV && dataToDisplay.birthDate && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Data de Nascimento:</p>
+                      <p className="text-sm text-muted-foreground mb-1">Data de Nascimento:</p>
                       <p className="font-medium">
-                        {format(dataToDisplay.birthDate, "PPP", { locale: ptBR })}
+                        {format(dataToDisplay.birthDate, "dd/MM/yyyy", { locale: ptBR })}
                       </p>
                     </div>
                   )}
@@ -114,42 +117,33 @@ const Report: React.FC = () => {
               </div>
 
               <div>
-                <h3 className="font-medium text-lg mb-3">Tipo de Tratamento</h3>
-                <ul className="list-disc pl-5 space-y-1">
+                <h3 className="font-medium text-lg mb-2">Tipo de Tratamento</h3>
+                <div className="treatment-types flex flex-wrap gap-3">
                   {dataToDisplay.isStartTreatment && (
-                    <li>Início de Tratamento</li>
+                    <div className="inline-flex items-center bg-secondary/30 px-2 py-1 rounded text-sm">
+                      Início de Tratamento
+                    </div>
                   )}
                   {dataToDisplay.isContinuousTreatment && (
-                    <li>Tratamento Contínuo</li>
+                    <div className="inline-flex items-center bg-secondary/30 px-2 py-1 rounded text-sm">
+                      Tratamento Contínuo
+                    </div>
                   )}
                   {dataToDisplay.isAntibioticTreatment && (
-                    <li>
+                    <div className="inline-flex items-center bg-secondary/30 px-2 py-1 rounded text-sm">
                       Tratamento com Antibiótico
                       {dataToDisplay.isCRMV && " (CRMV)"}
-                    </li>
+                    </div>
                   )}
-                </ul>
+                </div>
               </div>
 
-              <div>
-                <h3 className="font-medium text-lg mb-3">Produto Utilizado</h3>
-                {dataToDisplay.product ? (
-                  <div className="border rounded-md p-3 bg-secondary/50">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Código:</p>
-                        <p className="font-medium">{dataToDisplay.product.code}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Nome:</p>
-                        <p className="font-medium">{dataToDisplay.product.name}</p>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">Nenhum produto selecionado</p>
-                )}
-              </div>
+              {dataToDisplay.product && dataToDisplay.product.name && (
+                <div>
+                  <h3 className="font-medium text-lg mb-2">Produto</h3>
+                  <p className="font-medium">{dataToDisplay.product.name}</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </div>

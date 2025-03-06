@@ -4,6 +4,7 @@ import ClientForm from "@/components/ClientForm";
 import TreatmentsList from "@/components/TreatmentsList";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { TreatmentProvider } from "@/context/TreatmentContext";
+import Report from "@/components/Report";
 
 const Index: React.FC = () => {
   return (
@@ -25,7 +26,11 @@ const Index: React.FC = () => {
           <div className="space-y-8">
             <ClientForm />
             <TreatmentsList />
-            {/* Report component removed from UI, now only shown when printing */}
+            
+            {/* Report component is hidden but used for printing */}
+            <div className="hidden">
+              <Report />
+            </div>
           </div>
 
           <footer className="mt-16 text-center text-sm text-muted-foreground">
