@@ -16,7 +16,7 @@ export interface TreatmentData {
   birthDate: Date | undefined;
   isCRMV: boolean;
   product: Product | null;
-  shift: "morning" | "evening" | null; // Added shift property
+  shift: "morning" | "evening" | null;
 }
 
 export const initialTreatmentData: TreatmentData = {
@@ -31,5 +31,11 @@ export const initialTreatmentData: TreatmentData = {
   birthDate: undefined,
   isCRMV: false,
   product: null,
-  shift: null // Default shift value
+  shift: null
+};
+
+// Helper function to determine the current shift based on time
+export const determineCurrentShift = (): "morning" | "evening" => {
+  const currentHour = new Date().getHours();
+  return currentHour >= 7 && currentHour < 16 ? "morning" : "evening";
 };

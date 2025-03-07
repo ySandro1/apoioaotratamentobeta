@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,9 @@ import {
   Save, 
   Clock, 
   ListChecks, 
-  Pill 
+  Pill,
+  Sun,
+  Moon
 } from "lucide-react";
 import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -42,7 +45,6 @@ const ClientForm: React.FC = () => {
     updateBirthDate,
     updateIsCRMV,
     updateProduct,
-    updateShift,
     saveCurrentTreatment,
     resetForm,
     selectedTreatment
@@ -125,11 +127,6 @@ const ClientForm: React.FC = () => {
       return;
     }
 
-    if (!treatmentData.shift) {
-      toast.error("Selecione o turno do tratamento");
-      return;
-    }
-
     saveCurrentTreatment();
     toast.success(selectedTreatment ? "Tratamento atualizado com sucesso" : "Tratamento salvo com sucesso");
     setFormattedCPF("");
@@ -137,6 +134,14 @@ const ClientForm: React.FC = () => {
     setProductName("");
     setBirthDateInput("");
   };
+
+  // Display text for the current shift
+  const shiftDisplayText = treatmentData.shift === "morning" 
+    ? "Manhã (7:00 - 16:00)" 
+    : "Tarde/Noite (16:00 - 23:00)";
+
+  // Icon for the current shift
+  const ShiftIcon = treatmentData.shift === "morning" ? Sun : Moon;
 
   return (
     <Card className="w-full max-w-3xl mx-auto card-shadow animate-fade-in">
@@ -333,18 +338,11 @@ const ClientForm: React.FC = () => {
         <div className="space-y-4">
           <h3 className="font-medium text-lg">Turno</h3>
           
-          <Select 
-            value={treatmentData.shift || ""} 
-            onValueChange={(value) => updateShift(value ? (value as "morning" | "evening") : null)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecione o turno" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="morning">Manhã (7:00 - 16:00)</SelectItem>
-              <SelectItem value="evening">Tarde/Noite (16:00 - 23:00)</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center space-x-3 p-3 border rounded-md bg-muted/20">
+            <ShiftIcon className="h-5 w-5 text-primary" />
+            <span className="font-medium">{shiftDisplayText}</span>
+            <span className="text-xs text-muted-foreground ml-auto">(Definido automaticamente)</span>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -357,7 +355,10 @@ const ClientForm: React.FC = () => {
             <Input
               id="product"
               value={productName}
-              onChange={handleProductNameChange}
+              onChange={(e) => {
+                setProductName(e.target.value);
+                updateProduct(e.target.value ? { name: e.target.value, code: "" } : null);
+              }}
               placeholder="Digite o nome do produto"
             />
           </div>

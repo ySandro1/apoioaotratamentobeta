@@ -1,5 +1,6 @@
+
 import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
-import { TreatmentData, initialTreatmentData, Product } from "../types/client";
+import { TreatmentData, initialTreatmentData, Product, determineCurrentShift } from "../types/client";
 import { v4 as uuidv4 } from "uuid";
 
 interface TreatmentContextType {
@@ -30,7 +31,8 @@ const TreatmentContext = createContext<TreatmentContextType | undefined>(undefin
 export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [treatmentData, setTreatmentData] = useState<TreatmentData>({
     ...initialTreatmentData,
-    id: uuidv4()
+    id: uuidv4(),
+    shift: determineCurrentShift() // Set the initial shift based on current time
   });
   const [allTreatments, setAllTreatments] = useState<TreatmentData[]>([]);
   const [selectedTreatment, setSelectedTreatment] = useState<TreatmentData | null>(null);
@@ -100,7 +102,8 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
     setTreatmentData({
       ...initialTreatmentData,
       id: uuidv4(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      shift: determineCurrentShift() // Reset with the current shift
     });
     setSelectedTreatment(null);
   };
