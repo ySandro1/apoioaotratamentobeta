@@ -135,14 +135,6 @@ const ClientForm: React.FC = () => {
     setBirthDateInput("");
   };
 
-  // Display text for the current shift
-  const shiftDisplayText = treatmentData.shift === "morning" 
-    ? "Manhã (7:00 - 16:00)" 
-    : "Tarde/Noite (16:00 - 23:00)";
-
-  // Icon for the current shift
-  const ShiftIcon = treatmentData.shift === "morning" ? Sun : Moon;
-
   return (
     <Card className="w-full max-w-3xl mx-auto card-shadow animate-fade-in">
       <CardHeader className="bg-primary/5 border-b">
@@ -335,15 +327,7 @@ const ClientForm: React.FC = () => {
           )}
         </div>
 
-        <div className="space-y-4">
-          <h3 className="font-medium text-lg">Turno</h3>
-          
-          <div className="flex items-center space-x-3 p-3 border rounded-md bg-muted/20">
-            <ShiftIcon className="h-5 w-5 text-primary" />
-            <span className="font-medium">{shiftDisplayText}</span>
-            <span className="text-xs text-muted-foreground ml-auto">(Definido automaticamente)</span>
-          </div>
-        </div>
+        {/* Removed the visible shift section - the shift is still being set automatically in the background */}
 
         <div className="space-y-4">
           <h3 className="font-medium text-lg">Produto (Opcional)</h3>
@@ -383,3 +367,4 @@ const ClientForm: React.FC = () => {
 };
 
 export default ClientForm;
+
