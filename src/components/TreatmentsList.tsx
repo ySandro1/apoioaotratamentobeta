@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -13,7 +12,10 @@ import {
   Plus, 
   List, 
   Printer,
-  AlertCircle 
+  AlertCircle,
+  Clock,
+  ListChecks,
+  Pill
 } from "lucide-react";
 import { toast } from "sonner";
 import { 
@@ -62,11 +64,13 @@ const TreatmentsList: React.FC = () => {
   };
 
   const handlePrintReport = () => {
-    // Create a print-friendly environment
     const originalTitle = document.title;
     document.title = `Relatório`;
     
-    // Generate report HTML content
+    const morningTreatments = allTreatments.filter(t => t.shift === "morning");
+    const eveningTreatments = allTreatments.filter(t => t.shift === "evening");
+    const unspecifiedTreatments = allTreatments.filter(t => t.shift === null);
+    
     const reportHTML = `
       <div style="padding: 10px; font-family: Arial, sans-serif;">
         <style>
@@ -93,6 +97,22 @@ const TreatmentsList: React.FC = () => {
             .compact-table th { background-color: #f2f2f2; font-weight: bold; }
             .treatment-label { font-weight: bold; margin-bottom: 1px; }
             .treatment-value { margin-bottom: 1px; }
+            .shift-header { 
+              font-size: 12px; 
+              font-weight: bold; 
+              margin-top: 15px; 
+              margin-bottom: 5px; 
+              background-color: #f2f2f2;
+              padding: 3px 5px;
+              border-radius: 3px;
+            }
+            .support-check { 
+              width: 12px; 
+              height: 12px; 
+              border: 1px solid #000; 
+              display: inline-block;
+              vertical-align: middle;
+            }
           }
         </style>
         <div class="print-header">
@@ -103,57 +123,158 @@ const TreatmentsList: React.FC = () => {
         <div class="print-section">
           <p style="font-size: 10px; margin-bottom: 5px;">Total de Tratamentos: ${allTreatments.length}</p>
           
-          <table class="compact-table">
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Contato</th>
-                <th>Tipo de Tratamento</th>
-                <th>Produto</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${allTreatments.map((treatment) => `
+          ${morningTreatments.length > 0 ? `
+            <div class="shift-header">Turno da Manhã (7:00 - 16:00) - ${morningTreatments.length} tratamentos</div>
+            <table class="compact-table">
+              <thead>
                 <tr>
-                  <td>
-                    <div class="treatment-value">${treatment.clientName}</div>
-                    <div class="treatment-value">${treatment.clientCPF}</div>
-                    ${treatment.isAntibioticTreatment && !treatment.isCRMV && treatment.birthDate ? 
-                      `<div class="treatment-value"><small>Nasc: ${format(new Date(treatment.birthDate), "dd/MM/yyyy", { locale: ptBR })}</small></div>` : ''}
-                  </td>
-                  <td>
-                    <div class="treatment-value">${treatment.clientPhone}</div>
-                  </td>
-                  <td>
-                    <div class="treatment-value" style="white-space: nowrap;">
-                      ${treatment.isStartTreatment ? '• Início; ' : ''}
-                      ${treatment.isContinuousTreatment ? '• Contínuo; ' : ''}
-                      ${treatment.isAntibioticTreatment ? '• Antibiótico' : ''}
-                      ${treatment.isAntibioticTreatment && treatment.isCRMV ? ' (CRMV)' : ''}
-                    </div>
-                  </td>
-                  <td>
-                    <div class="treatment-value">${treatment.product?.name || "Não informado"}</div>
-                  </td>
-                  <td>
-                    <div class="treatment-value">${format(new Date(treatment.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}</div>
-                  </td>
+                  <th>Cliente</th>
+                  <th>Contato</th>
+                  <th>Tipo de Tratamento</th>
+                  <th>Produto</th>
+                  <th>Data</th>
+                  <th>Apoio feito?</th>
                 </tr>
-              `).join('')}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${morningTreatments.map((treatment) => `
+                  <tr>
+                    <td>
+                      <div class="treatment-value">${treatment.clientName}</div>
+                      <div class="treatment-value">${treatment.clientCPF}</div>
+                      ${treatment.isAntibioticTreatment && !treatment.isCRMV && treatment.birthDate ? 
+                        `<div class="treatment-value"><small>Nasc: ${format(new Date(treatment.birthDate), "dd/MM/yyyy", { locale: ptBR })}</small></div>` : ''}
+                    </td>
+                    <td>
+                      <div class="treatment-value">${treatment.clientPhone}</div>
+                    </td>
+                    <td>
+                      <div class="treatment-value" style="white-space: nowrap;">
+                        ${treatment.isStartTreatment ? '• Início; ' : ''}
+                        ${treatment.isContinuousTreatment ? '• Contínuo; ' : ''}
+                        ${treatment.isAntibioticTreatment ? '• Antibiótico' : ''}
+                        ${treatment.isAntibioticTreatment && treatment.isCRMV ? ' (CRMV)' : ''}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="treatment-value">${treatment.product?.name || "Não informado"}</div>
+                    </td>
+                    <td>
+                      <div class="treatment-value">${format(new Date(treatment.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}</div>
+                    </td>
+                    <td style="text-align: center;">
+                      <div class="support-check"></div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : ''}
+          
+          ${eveningTreatments.length > 0 ? `
+            <div class="shift-header">Turno da Tarde/Noite (16:00 - 23:00) - ${eveningTreatments.length} tratamentos</div>
+            <table class="compact-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Contato</th>
+                  <th>Tipo de Tratamento</th>
+                  <th>Produto</th>
+                  <th>Data</th>
+                  <th>Apoio feito?</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${eveningTreatments.map((treatment) => `
+                  <tr>
+                    <td>
+                      <div class="treatment-value">${treatment.clientName}</div>
+                      <div class="treatment-value">${treatment.clientCPF}</div>
+                      ${treatment.isAntibioticTreatment && !treatment.isCRMV && treatment.birthDate ? 
+                        `<div class="treatment-value"><small>Nasc: ${format(new Date(treatment.birthDate), "dd/MM/yyyy", { locale: ptBR })}</small></div>` : ''}
+                    </td>
+                    <td>
+                      <div class="treatment-value">${treatment.clientPhone}</div>
+                    </td>
+                    <td>
+                      <div class="treatment-value" style="white-space: nowrap;">
+                        ${treatment.isStartTreatment ? '• Início; ' : ''}
+                        ${treatment.isContinuousTreatment ? '• Contínuo; ' : ''}
+                        ${treatment.isAntibioticTreatment ? '• Antibiótico' : ''}
+                        ${treatment.isAntibioticTreatment && treatment.isCRMV ? ' (CRMV)' : ''}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="treatment-value">${treatment.product?.name || "Não informado"}</div>
+                    </td>
+                    <td>
+                      <div class="treatment-value">${format(new Date(treatment.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}</div>
+                    </td>
+                    <td style="text-align: center;">
+                      <div class="support-check"></div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : ''}
+          
+          ${unspecifiedTreatments.length > 0 ? `
+            <div class="shift-header">Turno não especificado - ${unspecifiedTreatments.length} tratamentos</div>
+            <table class="compact-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Contato</th>
+                  <th>Tipo de Tratamento</th>
+                  <th>Produto</th>
+                  <th>Data</th>
+                  <th>Apoio feito?</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${unspecifiedTreatments.map((treatment) => `
+                  <tr>
+                    <td>
+                      <div class="treatment-value">${treatment.clientName}</div>
+                      <div class="treatment-value">${treatment.clientCPF}</div>
+                      ${treatment.isAntibioticTreatment && !treatment.isCRMV && treatment.birthDate ? 
+                        `<div class="treatment-value"><small>Nasc: ${format(new Date(treatment.birthDate), "dd/MM/yyyy", { locale: ptBR })}</small></div>` : ''}
+                    </td>
+                    <td>
+                      <div class="treatment-value">${treatment.clientPhone}</div>
+                    </td>
+                    <td>
+                      <div class="treatment-value" style="white-space: nowrap;">
+                        ${treatment.isStartTreatment ? '• Início; ' : ''}
+                        ${treatment.isContinuousTreatment ? '• Contínuo; ' : ''}
+                        ${treatment.isAntibioticTreatment ? '• Antibiótico' : ''}
+                        ${treatment.isAntibioticTreatment && treatment.isCRMV ? ' (CRMV)' : ''}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="treatment-value">${treatment.product?.name || "Não informado"}</div>
+                    </td>
+                    <td>
+                      <div class="treatment-value">${format(new Date(treatment.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}</div>
+                    </td>
+                    <td style="text-align: center;">
+                      <div class="support-check"></div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : ''}
         </div>
       </div>
     `;
     
-    // Open a new window for the report preview
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(reportHTML);
       printWindow.document.close();
       
-      // Wait for content to load before printing
       printWindow.onload = function() {
         printWindow.print();
         printWindow.onafterprint = function() {
@@ -255,9 +376,16 @@ const TreatmentsList: React.FC = () => {
                         CPF: {treatment.clientCPF}
                       </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {format(new Date(treatment.createdAt), "dd/MM/yy HH:mm")}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">
+                        {format(new Date(treatment.createdAt), "dd/MM/yy HH:mm")}
+                      </p>
+                      <p className="text-xs font-medium mt-1">
+                        {treatment.shift === "morning" ? "Manhã" : 
+                         treatment.shift === "evening" ? "Tarde/Noite" : 
+                         "Turno não especificado"}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="text-sm mb-2">
@@ -266,18 +394,18 @@ const TreatmentsList: React.FC = () => {
                     </p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {treatment.isStartTreatment && (
-                        <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
-                          Início
+                        <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Clock className="h-3 w-3" /> Início
                         </span>
                       )}
                       {treatment.isContinuousTreatment && (
-                        <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
-                          Contínuo
+                        <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <ListChecks className="h-3 w-3" /> Contínuo
                         </span>
                       )}
                       {treatment.isAntibioticTreatment && (
-                        <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
-                          Antibiótico
+                        <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Pill className="h-3 w-3" /> Antibiótico
                         </span>
                       )}
                     </div>

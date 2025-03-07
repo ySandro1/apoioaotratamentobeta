@@ -10,10 +10,25 @@ import { toast } from "sonner";
 import { formatCPF, formatPhone, isValidCPF, formatDate } from "@/utils/formatters";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, User, Phone, FileText, Save } from "lucide-react";
+import { 
+  CalendarIcon, 
+  User, 
+  Phone, 
+  FileText, 
+  Save, 
+  Clock, 
+  ListChecks, 
+  Pill 
+} from "lucide-react";
 import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Product } from "@/types/client";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 const ClientForm: React.FC = () => {
   const {
@@ -27,6 +42,7 @@ const ClientForm: React.FC = () => {
     updateBirthDate,
     updateIsCRMV,
     updateProduct,
+    updateShift,
     saveCurrentTreatment,
     resetForm,
     selectedTreatment
@@ -106,6 +122,11 @@ const ClientForm: React.FC = () => {
 
     if (treatmentData.isAntibioticTreatment && !treatmentData.isCRMV && !treatmentData.birthDate) {
       toast.error("Informe a data de nascimento para tratamento com antibiótico");
+      return;
+    }
+
+    if (!treatmentData.shift) {
+      toast.error("Selecione o turno do tratamento");
       return;
     }
 
@@ -194,8 +215,9 @@ const ClientForm: React.FC = () => {
               />
               <Label
                 htmlFor="start-treatment"
-                className="cursor-pointer"
+                className="cursor-pointer flex items-center gap-2"
               >
+                <Clock className="h-4 w-4 text-primary" />
                 Início de Tratamento
               </Label>
             </div>
@@ -210,8 +232,9 @@ const ClientForm: React.FC = () => {
               />
               <Label
                 htmlFor="continuous-treatment"
-                className="cursor-pointer"
+                className="cursor-pointer flex items-center gap-2"
               >
+                <ListChecks className="h-4 w-4 text-primary" />
                 Tratamento Contínuo
               </Label>
             </div>
@@ -233,8 +256,9 @@ const ClientForm: React.FC = () => {
               />
               <Label
                 htmlFor="antibiotic-treatment"
-                className="cursor-pointer"
+                className="cursor-pointer flex items-center gap-2"
               >
+                <Pill className="h-4 w-4 text-primary" />
                 Tratamento com Antibiótico
               </Label>
             </div>
@@ -304,6 +328,23 @@ const ClientForm: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="font-medium text-lg">Turno</h3>
+          
+          <Select 
+            value={treatmentData.shift || ""} 
+            onValueChange={(value) => updateShift(value ? (value as "morning" | "evening") : null)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Selecione o turno" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="morning">Manhã (7:00 - 16:00)</SelectItem>
+              <SelectItem value="evening">Tarde/Noite (16:00 - 23:00)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-4">

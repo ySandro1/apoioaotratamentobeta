@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { PrinterIcon } from "lucide-react";
+import { PrinterIcon, Clock, ListChecks, Pill } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
@@ -58,13 +58,26 @@ const Report: React.FC = () => {
             table { width: 100%; border-collapse: collapse; margin: 5px 0; }
             th, td { border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 10px; }
             th { background-color: #f2f2f2; }
+            .support-check { 
+              width: 12px; 
+              height: 12px; 
+              border: 1px solid #000; 
+              display: inline-block;
+              vertical-align: middle;
+            }
           }
         </style>
         <div class="print-header">
           <h1>Relatório de Tratamento</h1>
           <p>Data: ${format(new Date(), "PPP", { locale: ptBR })}</p>
+          <p>Turno: ${dataToDisplay.shift === "morning" ? "Manhã (7:00 - 16:00)" : 
+                       dataToDisplay.shift === "evening" ? "Tarde/Noite (16:00 - 23:00)" : 
+                       "Não especificado"}</p>
         </div>
         ${printContents}
+        <div style="margin-top: 10px">
+          <p><strong>Apoio feito?</strong> <span class="support-check"></span></p>
+        </div>
       </div>
     `;
     
@@ -121,16 +134,19 @@ const Report: React.FC = () => {
                 <div className="treatment-types flex flex-wrap gap-3">
                   {dataToDisplay.isStartTreatment && (
                     <div className="inline-flex items-center bg-secondary/30 px-2 py-1 rounded text-sm">
+                      <Clock className="h-4 w-4 mr-1" />
                       Início de Tratamento
                     </div>
                   )}
                   {dataToDisplay.isContinuousTreatment && (
                     <div className="inline-flex items-center bg-secondary/30 px-2 py-1 rounded text-sm">
+                      <ListChecks className="h-4 w-4 mr-1" />
                       Tratamento Contínuo
                     </div>
                   )}
                   {dataToDisplay.isAntibioticTreatment && (
                     <div className="inline-flex items-center bg-secondary/30 px-2 py-1 rounded text-sm">
+                      <Pill className="h-4 w-4 mr-1" />
                       Tratamento com Antibiótico
                       {dataToDisplay.isCRMV && " (CRMV)"}
                     </div>

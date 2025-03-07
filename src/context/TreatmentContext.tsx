@@ -13,6 +13,7 @@ interface TreatmentContextType {
   updateBirthDate: (date: Date | undefined) => void;
   updateIsCRMV: (value: boolean) => void;
   updateProduct: (product: Product | null) => void;
+  updateShift: (shift: "morning" | "evening" | null) => void;
   resetForm: () => void;
   saveCurrentTreatment: () => void;
   allTreatments: TreatmentData[];
@@ -91,6 +92,10 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
     setTreatmentData(prev => ({ ...prev, product }));
   };
 
+  const updateShift = (shift: "morning" | "evening" | null) => {
+    setTreatmentData(prev => ({ ...prev, shift }));
+  };
+
   const resetForm = () => {
     setTreatmentData({
       ...initialTreatmentData,
@@ -144,6 +149,7 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
       updateBirthDate,
       updateIsCRMV,
       updateProduct,
+      updateShift,
       resetForm,
       saveCurrentTreatment,
       allTreatments,

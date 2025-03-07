@@ -16,6 +16,7 @@ export interface TreatmentData {
   birthDate: Date | undefined;
   isCRMV: boolean;
   product: Product | null;
+  shift: "morning" | "evening" | null; // Added shift property
 }
 
 export const initialTreatmentData: TreatmentData = {
@@ -29,5 +30,6 @@ export const initialTreatmentData: TreatmentData = {
   isAntibioticTreatment: false,
   birthDate: undefined,
   isCRMV: false,
-  product: null
+  product: null,
+  shift: null // Default shift value
 };
