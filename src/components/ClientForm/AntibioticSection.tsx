@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, LucideShieldAlert } from "lucide-react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { formatDate } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
@@ -49,24 +49,26 @@ const AntibioticSection: React.FC = () => {
   };
   
   return (
-    <div className="ml-6 pt-2 pl-4 border-l-2 border-primary/20 space-y-4 animate-slide-in">
-      <div className="space-y-2">
-        <div className="flex items-center space-x-2 mb-2">
+    <div className="ml-6 pt-3 pl-5 border-l-2 border-primary/30 space-y-5 animate-slide-in bg-secondary/10 p-4 rounded-md">
+      <div className="space-y-4">
+        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
           <Checkbox
             id="crmv"
             checked={treatmentData.isCRMV}
             onCheckedChange={(checked) => {
               updateIsCRMV(checked as boolean);
             }}
+            className="h-5 w-5 border-2"
           />
-          <Label htmlFor="crmv" className="cursor-pointer">
+          <Label htmlFor="crmv" className="cursor-pointer text-base flex items-center gap-2">
+            <LucideShieldAlert className="h-5 w-5 text-primary" />
             CRMV
           </Label>
         </div>
 
         {!treatmentData.isCRMV && (
-          <div className="space-y-2">
-            <Label htmlFor="birthdate" className="flex items-center gap-1">
+          <div className="space-y-3 p-3">
+            <Label htmlFor="birthdate" className="flex items-center gap-1 text-base">
               <span>Data de Nascimento</span>
             </Label>
             <div className="flex space-x-2">
@@ -76,15 +78,15 @@ const AntibioticSection: React.FC = () => {
                   value={birthDateInput}
                   onChange={handleDateInputChange}
                   placeholder="DD/MM/AAAA"
-                  className="pl-8"
+                  className="bg-background border-2 focus-visible:border-primary/50 pl-9"
                 />
-                <CalendarIcon className="h-4 w-4 text-muted-foreground absolute left-2.5 top-[10px]" />
+                <CalendarIcon className="h-4 w-4 text-muted-foreground absolute left-3 top-[13px]" />
               </div>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="px-2"
+                    className="px-2 border-2"
                     type="button"
                   >
                     <CalendarIcon className="h-4 w-4" />

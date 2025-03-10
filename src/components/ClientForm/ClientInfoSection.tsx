@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTreatment } from "@/context/TreatmentContext";
 import { formatCPF, formatPhone } from "@/utils/formatters";
-import { User, Phone } from "lucide-react";
+import { User, Phone, UserCircle } from "lucide-react";
 
 const ClientInfoSection: React.FC = () => {
   const {
@@ -41,13 +41,16 @@ const ClientInfoSection: React.FC = () => {
   };
   
   return (
-    <div className="space-y-4">
-      <h3 className="font-medium text-lg">Informações do Cliente</h3>
+    <div className="space-y-5 bg-secondary/30 p-5 rounded-lg border border-border/40">
+      <h3 className="font-semibold text-lg flex items-center gap-2">
+        <UserCircle className="h-5 w-5 text-primary" />
+        Informações do Cliente
+      </h3>
       
-      <div className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="cpf" className="flex items-center gap-1">
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-3">
+            <Label htmlFor="cpf" className="flex items-center gap-1 text-base">
               <span>CPF</span>
             </Label>
             <div className="relative">
@@ -57,14 +60,14 @@ const ClientInfoSection: React.FC = () => {
                 onChange={handleCPFChange}
                 maxLength={14}
                 placeholder="000.000.000-00"
-                className="pl-8"
+                className="bg-background border-2 focus-visible:border-primary/50 pl-9"
               />
-              <User className="h-4 w-4 text-muted-foreground absolute left-2.5 top-[10px]" />
+              <User className="h-4 w-4 text-muted-foreground absolute left-3 top-[13px]" />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="flex items-center gap-1">
+          <div className="space-y-3">
+            <Label htmlFor="phone" className="flex items-center gap-1 text-base">
               <span>Telefone</span>
             </Label>
             <div className="relative">
@@ -74,23 +77,27 @@ const ClientInfoSection: React.FC = () => {
                 onChange={handlePhoneChange}
                 maxLength={15}
                 placeholder="(00) 00000-0000"
-                className="pl-8"
+                className="bg-background border-2 focus-visible:border-primary/50 pl-9"
               />
-              <Phone className="h-4 w-4 text-muted-foreground absolute left-2.5 top-[10px]" />
+              <Phone className="h-4 w-4 text-muted-foreground absolute left-3 top-[13px]" />
             </div>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="name" className="flex items-center gap-1">
+        <div className="space-y-3">
+          <Label htmlFor="name" className="flex items-center gap-1 text-base">
             <span>Nome Completo</span>
           </Label>
-          <Input
-            id="name"
-            value={treatmentData.clientName}
-            onChange={(e) => updateClientName(e.target.value)}
-            placeholder="Nome do cliente"
-          />
+          <div className="relative">
+            <Input
+              id="name"
+              value={treatmentData.clientName}
+              onChange={(e) => updateClientName(e.target.value)}
+              placeholder="Nome do cliente"
+              className="bg-background border-2 focus-visible:border-primary/50 pl-9"
+            />
+            <UserCircle className="h-4 w-4 text-muted-foreground absolute left-3 top-[13px]" />
+          </div>
         </div>
       </div>
     </div>

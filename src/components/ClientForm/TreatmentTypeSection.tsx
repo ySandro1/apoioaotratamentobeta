@@ -16,45 +16,50 @@ const TreatmentTypeSection: React.FC = () => {
   } = useTreatment();
   
   return (
-    <div className="space-y-4">
-      <h3 className="font-medium text-lg">Tipo de Tratamento</h3>
+    <div className="space-y-5 bg-secondary/30 p-5 rounded-lg border border-border/40">
+      <h3 className="font-semibold text-lg flex items-center gap-2">
+        <ListChecks className="h-5 w-5 text-primary" />
+        Tipo de Tratamento
+      </h3>
       
-      <div className="space-y-4">
-        <div className="flex items-center space-x-2">
+      <div className="space-y-5">
+        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
           <Checkbox
             id="start-treatment"
             checked={treatmentData.isStartTreatment}
             onCheckedChange={(checked) => 
               updateIsStartTreatment(checked as boolean)
             }
+            className="h-5 w-5 border-2"
           />
           <Label
             htmlFor="start-treatment"
-            className="cursor-pointer flex items-center gap-2"
+            className="cursor-pointer flex items-center gap-2 text-base"
           >
-            <Clock className="h-4 w-4 text-primary" />
+            <Clock className="h-5 w-5 text-primary" />
             Início de Tratamento
           </Label>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
           <Checkbox
             id="continuous-treatment"
             checked={treatmentData.isContinuousTreatment}
             onCheckedChange={(checked) => 
               updateIsContinuousTreatment(checked as boolean)
             }
+            className="h-5 w-5 border-2"
           />
           <Label
             htmlFor="continuous-treatment"
-            className="cursor-pointer flex items-center gap-2"
+            className="cursor-pointer flex items-center gap-2 text-base"
           >
-            <ListChecks className="h-4 w-4 text-primary" />
+            <ListChecks className="h-5 w-5 text-primary" />
             Tratamento Contínuo
           </Label>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
           <Checkbox
             id="antibiotic-treatment"
             checked={treatmentData.isAntibioticTreatment}
@@ -67,12 +72,13 @@ const TreatmentTypeSection: React.FC = () => {
                 updateIsCRMV(false);
               }
             }}
+            className="h-5 w-5 border-2"
           />
           <Label
             htmlFor="antibiotic-treatment"
-            className="cursor-pointer flex items-center gap-2"
+            className="cursor-pointer flex items-center gap-2 text-base"
           >
-            <Pill className="h-4 w-4 text-primary" />
+            <Pill className="h-5 w-5 text-primary" />
             Tratamento com Antibiótico
           </Label>
         </div>
