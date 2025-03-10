@@ -22,8 +22,8 @@ const TreatmentTypeSection: React.FC = () => {
         Tipo de Tratamento
       </h3>
       
-      <div className="space-y-5">
-        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
+      <div className="space-y-6">
+        <div className="flex items-center space-x-3 bg-background/50 p-4 rounded-md hover:bg-background transition-colors shadow-sm">
           <Checkbox
             id="start-treatment"
             checked={treatmentData.isStartTreatment}
@@ -34,14 +34,14 @@ const TreatmentTypeSection: React.FC = () => {
           />
           <Label
             htmlFor="start-treatment"
-            className="cursor-pointer flex items-center gap-2 text-base"
+            className="cursor-pointer flex items-center gap-2 text-base w-full"
           >
             <Clock className="h-5 w-5 text-primary" />
             Início de Tratamento
           </Label>
         </div>
         
-        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
+        <div className="flex items-center space-x-3 bg-background/50 p-4 rounded-md hover:bg-background transition-colors shadow-sm">
           <Checkbox
             id="continuous-treatment"
             checked={treatmentData.isContinuousTreatment}
@@ -52,14 +52,14 @@ const TreatmentTypeSection: React.FC = () => {
           />
           <Label
             htmlFor="continuous-treatment"
-            className="cursor-pointer flex items-center gap-2 text-base"
+            className="cursor-pointer flex items-center gap-2 text-base w-full"
           >
             <ListChecks className="h-5 w-5 text-primary" />
             Tratamento Contínuo
           </Label>
         </div>
         
-        <div className="flex items-center space-x-3 bg-background/50 p-3 rounded-md hover:bg-background transition-colors">
+        <div className="flex items-center space-x-3 bg-background/50 p-4 rounded-md hover:bg-background transition-colors shadow-sm">
           <Checkbox
             id="antibiotic-treatment"
             checked={treatmentData.isAntibioticTreatment}
@@ -76,7 +76,7 @@ const TreatmentTypeSection: React.FC = () => {
           />
           <Label
             htmlFor="antibiotic-treatment"
-            className="cursor-pointer flex items-center gap-2 text-base"
+            className="cursor-pointer flex items-center gap-2 text-base w-full"
           >
             <Pill className="h-5 w-5 text-primary" />
             Tratamento com Antibiótico

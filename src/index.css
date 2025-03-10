@@ -128,6 +128,27 @@
     @apply bg-white/60 backdrop-blur-md border border-white/20;
   }
 
+  /* Button styles */
+  button:disabled {
+    @apply opacity-70 !important;
+    @apply bg-opacity-90 !important;
+    @apply border-opacity-90 !important;
+    @apply text-opacity-90 !important;
+  }
+
+  /* Interactive elements */
+  .interactive {
+    @apply transition-all duration-200;
+  }
+
+  .interactive:hover {
+    @apply shadow-md;
+  }
+
+  .interactive:active {
+    @apply scale-[0.98];
+  }
+
   /* Print styles */
   @media print {
     .no-print {
