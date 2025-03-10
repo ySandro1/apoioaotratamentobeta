@@ -4,7 +4,6 @@ import ClientForm from "@/components/ClientForm";
 import TreatmentsList from "@/components/TreatmentsList";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { TreatmentProvider } from "@/context/TreatmentContext";
-import Report from "@/components/Report";
 
 const Index: React.FC = () => {
   return (
@@ -26,7 +25,6 @@ const Index: React.FC = () => {
           <div className="space-y-8">
             <ClientForm />
             <TreatmentsList />
-            <Report />
           </div>
 
           <footer className="mt-16 text-center text-sm text-muted-foreground">
