@@ -23,10 +23,10 @@ const ClientInfoSection: React.FC = () => {
       setFormattedCPF(selectedTreatment.clientCPF);
       setFormattedPhone(selectedTreatment.clientPhone);
     } else {
-      setFormattedCPF("");
-      setFormattedPhone("");
+      setFormattedCPF(treatmentData.clientCPF);
+      setFormattedPhone(treatmentData.clientPhone);
     }
-  }, [selectedTreatment]);
+  }, [selectedTreatment, treatmentData]);
   
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCPF(e.target.value);
