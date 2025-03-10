@@ -6,6 +6,7 @@ import { useTreatment } from "@/context/TreatmentContext";
 
 const ProductSection: React.FC = () => {
   const {
+    treatmentData,
     updateProduct,
     selectedTreatment
   } = useTreatment();
@@ -16,9 +17,9 @@ const ProductSection: React.FC = () => {
     if (selectedTreatment && selectedTreatment.product) {
       setProductName(selectedTreatment.product.name);
     } else {
-      setProductName("");
+      setProductName(treatmentData.product?.name || "");
     }
-  }, [selectedTreatment]);
+  }, [selectedTreatment, treatmentData.product]);
   
   const handleProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
