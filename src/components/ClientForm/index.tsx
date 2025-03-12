@@ -39,7 +39,7 @@ const ClientForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto card-shadow animate-fade-in">
+    <Card className="w-full h-full card-shadow animate-fade-in">
       <CardHeader className="bg-primary/5 border-b">
         <CardTitle className="text-xl text-center font-medium flex items-center justify-center gap-2">
           <FileText className="h-5 w-5" />

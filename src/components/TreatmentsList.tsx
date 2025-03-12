@@ -307,7 +307,7 @@ const TreatmentsList: React.FC = () => {
   );
 
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-md border-2 animate-fade-in rounded-xl overflow-hidden">
+    <Card className="w-full h-full shadow-md border-2 animate-fade-in rounded-xl overflow-hidden">
       <CardHeader className="bg-primary/10 border-b">
         <CardTitle className="text-xl font-bold flex items-center justify-center gap-2">
           <ClipboardList className="h-5 w-5" />
@@ -316,7 +316,7 @@ const TreatmentsList: React.FC = () => {
       </CardHeader>
       <CardContent className="p-5">
         <div className="mb-5 flex flex-col sm:flex-row gap-3 justify-between">
-          <div className="relative flex-1 max-w-lg mx-auto sm:mx-0">
+          <div className="relative flex-1 max-w-full">
             <Input
               placeholder="Buscar por nome, CPF ou produto..."
               value={searchTerm}
@@ -368,7 +368,7 @@ const TreatmentsList: React.FC = () => {
           </div>
         </div>
 
-        <ScrollArea className="h-[300px] rounded-lg border-2 p-4">
+        <ScrollArea className="h-[450px] rounded-lg border-2 p-4">
           {filteredTreatments.length > 0 ? (
             <div className="space-y-4">
               {filteredTreatments.map((treatment) => (

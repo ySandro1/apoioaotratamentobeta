@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +40,21 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Melhorando efeitos de hover e botões desativados */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed;
+}
+
+/* Efeito de hover nos cards de tratamento */
+.treatment-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
 }

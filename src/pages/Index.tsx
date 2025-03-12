@@ -22,7 +22,8 @@ const Index: React.FC = () => {
             </p>
           </header>
 
-          <div className="space-y-10">
+          {/* Layout responsivo: coluna em mobile, linha em desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
             <ClientForm />
             <TreatmentsList />
           </div>
