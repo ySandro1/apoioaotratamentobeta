@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -120,7 +119,7 @@ const TreatmentsList: React.FC = () => {
           }
         </style>
         <div class="print-header">
-          <h1 style="font-size: 12px; margin-bottom: 5px;">Relatório de Tratamentos</h1>
+          <h1 style="font-size: 12px; margin-bottom: 5px;">Relatório de Apoio ao Tratamento</h1>
           <p style="font-size: 10px;">Data: ${format(new Date(), "PPP", { locale: ptBR })}</p>
         </div>
         

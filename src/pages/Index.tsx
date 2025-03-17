@@ -14,7 +14,7 @@ const Index: React.FC = () => {
           
           <header className="mb-12 text-center">
             <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary mb-4 text-sm font-medium animate-fade-in">
-              Sistema de Tratamentos
+              Apoio ao Tratamento
             </div>
             <h1 className="text-4xl font-bold mb-3 animate-fade-in">Apoio ao Tratamento</h1>
             <p className="text-muted-foreground max-w-xl mx-auto animate-fade-in text-lg">
@@ -29,7 +29,7 @@ const Index: React.FC = () => {
           </div>
 
           <footer className="mt-20 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Sistema de Tratamentos</p>
+            <p>© {new Date().getFullYear()} Apoio ao Tratamento</p>
           </footer>
         </div>
       </div>
