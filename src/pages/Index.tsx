@@ -16,7 +16,7 @@ const Index: React.FC = () => {
             <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary mb-4 text-sm font-medium animate-fade-in">
               Sistema de Tratamentos
             </div>
-            <h1 className="text-4xl font-bold mb-3 animate-fade-in">Controle de Tratamentos</h1>
+            <h1 className="text-4xl font-bold mb-3 animate-fade-in">Apoio ao Tratamento</h1>
             <p className="text-muted-foreground max-w-xl mx-auto animate-fade-in text-lg">
               Gerenciamento simplificado para acompanhamento de tratamentos médicos.
             </p>
