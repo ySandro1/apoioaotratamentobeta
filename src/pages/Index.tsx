@@ -7,8 +7,10 @@ import { TreatmentProvider } from "@/context/TreatmentContext";
 import { 
   ChevronRight, 
   Home, 
-  Layers, 
-  Users 
+  FileText, 
+  Settings,
+  Users,
+  LogOut
 } from "lucide-react";
 import { 
   NavigationMenu,
@@ -17,86 +19,121 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
 
 const Index: React.FC = () => {
   return (
     <TreatmentProvider>
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
         {/* Navbar */}
-        <header className="border-b border-white/10 px-4 py-3">
+        <header className="bg-white dark:bg-gray-900 shadow-sm px-4 py-3">
           <div className="container flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-primary font-bold text-xl">AT</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center">
+                <div className="bg-blue-600 text-white p-1 rounded">
+                  <span className="text-xl font-bold">+</span>
+                </div>
+                <span className="text-xl font-bold ml-2">Apoio</span>
+              </div>
               <NavigationMenu className="hidden md:block">
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuLink 
                       href="#" 
-                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-white/10"}
+                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-blue-50 dark:hover:bg-gray-800"}
                     >
+                      <Home className="w-4 h-4 mr-2" />
                       Início
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
                     <NavigationMenuLink 
                       href="#" 
-                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-white/10"}
+                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-blue-50 dark:hover:bg-gray-800"}
                     >
-                      Dashboard
+                      <Users className="w-4 h-4 mr-2" />
+                      Pacientes
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
                     <NavigationMenuLink 
                       href="#" 
-                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-white/10"}
+                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-blue-50 dark:hover:bg-gray-800"}
                     >
-                      Clientes
+                      <FileText className="w-4 h-4 mr-2" />
+                      Relatórios
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
                     <NavigationMenuLink 
                       href="#" 
-                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-white/10"}
+                      className={navigationMenuTriggerStyle() + " bg-transparent hover:bg-blue-50 dark:hover:bg-gray-800"}
                     >
-                      Tratamentos
+                      <Settings className="w-4 h-4 mr-2" />
+                      Configurações
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <ThemeSwitcher />
+              <Button variant="outline" size="sm" className="rounded-full bg-blue-50 border-none dark:bg-gray-800">
+                Logo
+              </Button>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         </header>
 
         <main>
           {/* Hero section */}
-          <section className="py-16 container text-center">
-            <div className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary mb-6 text-sm font-medium">
-              <span className="mr-1">•</span> Plataforma para gestão de tratamentos farmacêuticos
-            </div>
-            <h1 className="text-5xl font-bold mb-4">
-              Acompanhe o progresso dos seus <span className="text-primary">pacientes</span>
+          <section className="py-12 container text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+              Apoio ao Tratamento
             </h1>
-            <p className="text-white/70 max-w-xl mx-auto mb-12 text-lg">
-              Gerencie tratamentos, monitore o desenvolvimento, e conecte-se com seus pacientes.
-              Tudo em um só lugar.
+            <p className="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mb-8 text-lg">
+              Sistema de suporte ao paciente
             </p>
+            
+            {/* Treatment type tabs - these are just visual in the mockup */}
+            <div className="flex flex-wrap justify-center gap-4 mb-10">
+              <Button variant="outline" className="rounded-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700">
+                Início
+              </Button>
+              <Button variant="outline" className="rounded-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700">
+                Tratamento
+              </Button>
+              <Button variant="outline" className="rounded-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700">
+                Contínuo
+              </Button>
+              <Button variant="outline" className="rounded-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700">
+                Antibiótico
+              </Button>
+              <Button variant="outline" className="rounded-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700">
+                Produto
+              </Button>
+            </div>
           </section>
 
-          {/* Layout responsivo: coluna em mobile, linha em desktop */}
+          {/* Application container */}
           <div className="container pb-20">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
-              <ClientForm />
-              <TreatmentsList />
+            <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm">
+              {/* Main form and listing area */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+                <ClientForm />
+                <TreatmentsList />
+              </div>
             </div>
           </div>
         </main>
 
-        <footer className="border-t border-white/10 py-8">
+        <footer className="border-t border-gray-200 dark:border-gray-800 py-8 bg-white dark:bg-gray-900">
           <div className="container text-center">
-            <p className="text-white/70">© {new Date().getFullYear()} Apoio ao Tratamento</p>
+            <p className="text-gray-600 dark:text-gray-400">© {new Date().getFullYear()} Apoio ao Tratamento</p>
           </div>
         </footer>
       </div>
