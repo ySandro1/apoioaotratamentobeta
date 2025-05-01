@@ -53,14 +53,14 @@ const ProductStep: React.FC = () => {
             <span>Turno</span>
           </Label>
           <Select 
-            value={treatmentData.shift || ""} 
-            onValueChange={(value: string) => updateShift(value === "" ? null : (value as "morning" | "evening"))}
+            value={treatmentData.shift || "unspecified"} 
+            onValueChange={(value: string) => updateShift(value === "unspecified" ? null : (value as "morning" | "evening"))}
           >
             <SelectTrigger id="shift" className="w-full bg-background border-2">
               <SelectValue placeholder="Selecione o turno" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Não especificado</SelectItem>
+              <SelectItem value="unspecified">Não especificado</SelectItem>
               <SelectItem value="morning">Manhã (7:00 - 16:00)</SelectItem>
               <SelectItem value="evening">Tarde/Noite (16:00 - 23:00)</SelectItem>
             </SelectContent>
