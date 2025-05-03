@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { TreatmentData, initialTreatmentData, Product, determineCurrentShift } from "../types/client";
 import { v4 as uuidv4 } from "uuid";

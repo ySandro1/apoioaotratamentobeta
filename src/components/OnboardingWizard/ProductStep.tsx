@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useTreatment } from "@/context/TreatmentContext";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Package } from "lucide-react";
+import { Package, Clock } from "lucide-react";
 import { 
   Select,
   SelectContent,
@@ -51,6 +51,10 @@ const ProductStep: React.FC = () => {
         <div className="space-y-3">
           <Label htmlFor="shift" className="flex items-center gap-1 text-base">
             <span>Turno</span>
+            <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5 flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              Auto
+            </span>
           </Label>
           <Select 
             value={treatmentData.shift || "unspecified"} 
