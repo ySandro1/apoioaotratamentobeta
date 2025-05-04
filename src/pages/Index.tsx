@@ -6,6 +6,7 @@ import { TreatmentProvider } from "@/context/TreatmentContext";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import OnboardingWizard from "@/components/OnboardingWizard";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 const Index: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -16,7 +17,10 @@ const Index: React.FC = () => {
         <header className="bg-white dark:bg-gray-900 shadow-sm py-4 px-6">
           <div className="container mx-auto flex items-center justify-between">
             <h1 className="text-2xl font-bold">Apoio ao Tratamento</h1>
-            <ThemeSwitcher />
+            <div className="flex items-center gap-3">
+              <PwaInstallPrompt />
+              <ThemeSwitcher />
+            </div>
           </div>
         </header>
 
