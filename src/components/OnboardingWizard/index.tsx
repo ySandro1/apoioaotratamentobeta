@@ -26,7 +26,6 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onClose }) => {
   const steps = [
     { title: "Dados do Cliente", component: ClientInfoStep },
     { title: "Tipo de Tratamento", component: TreatmentTypeStep },
-    ...(treatmentData.isAntibioticTreatment ? [{ title: "Dados do Antibiótico", component: AntibioticStep }] : []),
     { title: "Produto", component: ProductStep },
     { title: "Confirmação", component: ConfirmationStep }
   ];
@@ -43,7 +42,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onClose }) => {
       return;
     }
 
-    if (treatmentData.isAntibioticTreatment && currentStep === 2 && !treatmentData.isCRMV && !treatmentData.birthDate) {
+    if (currentStep === 1 && treatmentData.isAntibioticTreatment && !treatmentData.isCRMV && !treatmentData.birthDate) {
       toast.error("Informe a data de nascimento para tratamento com antibiótico");
       return;
     }
