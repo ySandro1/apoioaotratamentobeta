@@ -29,8 +29,8 @@ const Dashboard = () => {
       <header className="bg-card shadow-sm py-4 px-6 border-b border-border">
         <div className="container mx-auto flex items-center justify-between">
           <div className="animate-fade-in">
-            <h1 className="text-2xl font-bold text-success animate-fade-in [animation-delay:0.2s]">RD Saúde</h1>
-            <p className="text-lg text-muted-foreground animate-fade-in [animation-delay:0.4s]">Apoio</p>
+            <h1 className="text-2xl font-bold text-success animate-fade-in" style={{animationDelay: '0.2s'}}>RD Saúde</h1>
+            <p className="text-lg text-muted-foreground animate-fade-in" style={{animationDelay: '0.4s'}}>Apoio</p>
           </div>
           <div className="flex items-center gap-3">
             <PwaInstallPrompt />
