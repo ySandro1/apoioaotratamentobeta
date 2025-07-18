@@ -37,9 +37,9 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [selectedTreatment, setSelectedTreatment] = useState<TreatmentData | null>(null);
 
   useEffect(() => {
-    try {
-      const savedTreatments = localStorage.getItem(STORAGE_KEY);
-      if (savedTreatments) {
+    const savedTreatments = localStorage.getItem(STORAGE_KEY);
+    if (savedTreatments) {
+      try {
         const parsedTreatments = JSON.parse(savedTreatments);
         const treatmentsWithDates = parsedTreatments.map((treatment: any) => ({
           ...treatment,
@@ -47,19 +47,14 @@ export const TreatmentProvider: React.FC<{ children: ReactNode }> = ({ children 
           birthDate: treatment.birthDate ? new Date(treatment.birthDate) : undefined,
         }));
         setAllTreatments(treatmentsWithDates);
+      } catch (error) {
+        console.error("Erro ao carregar tratamentos:", error);
       }
-    } catch (error) {
-      console.error("Erro ao carregar tratamentos:", error);
-      setAllTreatments([]);
     }
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allTreatments));
-    } catch (error) {
-      console.error("Erro ao salvar tratamentos:", error);
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allTreatments));
   }, [allTreatments]);
 
   const updateClientName = (name: string) => {
