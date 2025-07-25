@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import TreatmentsList from "@/components/TreatmentsList";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { TreatmentProvider, useTreatment } from "@/context/TreatmentContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, FileText, Activity } from "lucide-react";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import PwaInstallPrompt from "@/components/PwaInstallPrompt";
+import SplashScreen from "@/components/SplashScreen";
+import ReportsSection from "@/components/ReportsSection";
 
 const Dashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showReports, setShowReports] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const { allTreatments } = useTreatment();
 
   const todayTreatments = allTreatments.filter(treatment => {
@@ -21,6 +24,10 @@ const Dashboard = () => {
     weekAgo.setDate(weekAgo.getDate() - 7);
     return new Date(treatment.createdAt) >= weekAgo;
   });
+
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -39,6 +46,18 @@ const Dashboard = () => {
 
       {showOnboarding ? (
         <OnboardingWizard onClose={() => setShowOnboarding(false)} />
+      ) : showReports ? (
+        <main className="container mx-auto py-8 px-4">
+          <ReportsSection />
+          <div className="mt-6 text-center">
+            <button 
+              onClick={() => setShowReports(false)}
+              className="text-primary hover:underline"
+            >
+              ← Voltar para o início
+            </button>
+          </div>
+        </main>
       ) : (
         <main className="container mx-auto py-8 px-4 space-y-6">
           <div className="text-center mb-8 animate-slide-in">
@@ -58,7 +77,8 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-card border-border hover:bg-accent/10 transition-colors cursor-pointer">
+            <Card className="bg-card border-border hover:bg-accent/10 transition-colors cursor-pointer"
+                  onClick={() => setShowReports(true)}>
               <CardContent className="p-6 text-center">
                 <div className="bg-success w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FileText className="h-8 w-8 text-success-foreground" />
@@ -92,7 +112,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <TreatmentsList />
+          
         </main>
       )}
 
