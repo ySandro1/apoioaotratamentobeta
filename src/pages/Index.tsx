@@ -3,14 +3,12 @@ import TreatmentsList from "@/components/TreatmentsList";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { TreatmentProvider, useTreatment } from "@/context/TreatmentContext";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus, FileText, Activity, X } from "lucide-react";
+import { Plus, FileText, Activity } from "lucide-react";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 const Dashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showReports, setShowReports] = useState(false);
   const { allTreatments } = useTreatment();
 
   const todayTreatments = allTreatments.filter(treatment => {
@@ -29,8 +27,8 @@ const Dashboard = () => {
       <header className="bg-card shadow-sm py-4 px-6 border-b border-border">
         <div className="container mx-auto flex items-center justify-between">
           <div className="animate-fade-in">
-            <h1 className="text-2xl font-bold text-success animate-fade-in [animation-delay:0.2s]">RD Saúde</h1>
-            <p className="text-lg text-muted-foreground animate-fade-in [animation-delay:0.4s]">Apoio</p>
+            <h1 className="text-2xl font-bold text-success">RD Saúde</h1>
+            <p className="text-lg text-muted-foreground">Apoio ao Tratamento</p>
           </div>
           <div className="flex items-center gap-3">
             <PwaInstallPrompt />
@@ -60,14 +58,13 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-card border-border hover:bg-accent/10 transition-colors cursor-pointer" 
-                  onClick={() => setShowReports(true)}>
+            <Card className="bg-card border-border hover:bg-accent/10 transition-colors cursor-pointer">
               <CardContent className="p-6 text-center">
                 <div className="bg-success w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FileText className="h-8 w-8 text-success-foreground" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Relatórios</h3>
-                <p className="text-muted-foreground">Gerar relatórios e visualizar tratamentos</p>
+                <p className="text-muted-foreground">Gerar relatórios para impressão</p>
               </CardContent>
             </Card>
           </div>
@@ -95,23 +92,8 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
+          <TreatmentsList />
         </main>
-      )}
-
-      {showReports && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-background max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-lg">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Relatórios e Tratamentos</h2>
-              <Button variant="ghost" size="icon" onClick={() => setShowReports(false)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="p-4">
-              <TreatmentsList />
-            </div>
-          </div>
-        </div>
       )}
 
       <footer className="border-t border-border py-4 text-center mt-8">
